@@ -7,7 +7,6 @@
 TMRpcm tmrpcm;
 
 int RECV_PIN = 7;
-bool i = false;
 IRrecv irrecv(RECV_PIN);
 decode_results results;
 
@@ -27,11 +26,13 @@ void loop()
 {
      tmrpcm.setVolume(6);
      tmrpcm.play("test.wav");
+ 
   if (irrecv.decode(&results))
   {
     switch (results.value) {
       case 16756815:
-        i=true;
+         tmrpcm.setVolume(6);
+         tmrpcm.play("test.wav");
         break;
     }
      
