@@ -1,43 +1,33 @@
+// Code By ZacHary Perrott 2022 
 #include <IRremote.h>
-#include "SD.h"
-#define SD_ChipSelectPin 10
-#include "TMRpcm.h"
-#include "SPI.h"
+#include <SimpleSDAudio.h>
 
-TMRpcm tmrpcm;
-
-int RECV_PIN = 7;
+int RECV_PIN = 8;
 IRrecv irrecv(RECV_PIN);
 decode_results results;
-
+int LED = 7;
 void setup()
 {
+  SdPlay.init(SSDA_MODE_FULLRATE | SSDA_MODE_MONO | SSDA_MODE_AUTOWORKER);//why does this line kill it 
   irrecv.enableIRIn(); // Start the receiver
-  tmrpcm.speakerPin=9;
-Serial.begin(9600);
-if(!SD.begin(SD_ChipSelectPin))
-{
-  Serial.println("SD fail");
-  return;
-}
+   Serial.begin(9600);
+  pinMode(LED, OUTPUT);
+   SdPlay.setSDCSPin(4);
+   
 }
 
 void loop()
 {
-     tmrpcm.setVolume(6);
-     tmrpcm.play("test.wav");
- 
   if (irrecv.decode(&results))
   {
     switch (results.value) {
       case 16756815:
-         tmrpcm.setVolume(6);
-         tmrpcm.play("test.wav");
-        break;
+        digitalWrite(LED, HIGH);
+          SdPlay.setFile("test.wav"); 
+          SdPlay.play();
+       break;
     }
-     
+    Serial.println(results.value);
     irrecv.resume(); // Receive the next value
-    
   }
-     
 }
